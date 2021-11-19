@@ -5,7 +5,6 @@ from vehicle.models import Vehicle
 class Dealership(models.Model):
     VEHICLE_TYPE = [(1, "NEW"), (2, "USED"), (3, "SCRAP")]
 
-    entry_id = models.AutoField(primary_key=True, unique=True, editable=False)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     description = models.TextField("Description", max_length=200, blank=True)
     vehicle_type = models.CharField(

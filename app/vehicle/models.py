@@ -10,11 +10,10 @@ class Vehicle(models.Model):
         (5, "MODERATE"),
     ]
 
-    vehicle_id = models.AutoField(primary_key=True, unique=True)
     brand = models.CharField("Brand", max_length=60)
     model = models.CharField("Model", max_length=60)
     horse_power = models.IntegerField("Horse Power", null=False, blank=False)
-    build_year = models.DateField("Date", auto_now_add=True)
+    build_year = models.DateField("Date")
     euro_category = models.IntegerField(
         "Euro Category", choices=EURO_CATEGORY_CHOICES, default=1
     )
