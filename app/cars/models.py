@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-class Vehicle(models.Model):
+class Cars(models.Model):
     EURO_CATEGORY_CHOICES = [
         (1, "LOW"),
         (2, "SEMI-LOW"),
@@ -14,8 +14,8 @@ class Vehicle(models.Model):
     model = models.CharField("Model", max_length=60)
     horse_power = models.IntegerField("Horse Power", null=False, blank=False)
     build_year = models.DateField("Date")
-    euro_category = models.IntegerField(
-        "Euro Category", choices=EURO_CATEGORY_CHOICES, default=1
+    euro_category = models.CharField(
+        "Euro Category", choices=EURO_CATEGORY_CHOICES, default=1, max_length=10
     )
     price = models.IntegerField("Price", null=False, blank=False, default=0)
 
