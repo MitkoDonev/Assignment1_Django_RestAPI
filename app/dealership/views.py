@@ -1,149 +1,126 @@
-import json
-from django.shortcuts import render
-from django.http import JsonResponse
+import re
+from django.http.response import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
-from .models import Dealership
-from cars.models import Cars
-from trucks.models import Trucks
+from .serializers import CarSerializer, TruckSerializer
+from .models import Cars, Trucks
 
-# Create your views here.
-def get_entries(request):
-    if request.method != "GET":
-        return JsonResponse({"message": "Wrong HTTP"}, safe=False, status=405)
+class CarView(APIView):
+    """
+    List all cars
+    """
+    def get(self, request, format=None):
+        cars = Cars.objects.all()
+        serializer = CarSerializer(cars, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    entries = Dealership.objects.all().values()
-    result = [entries_values for entries_values in entries]
+    """
+    Create new car
+    """
+    def post(self, request, format=None):
+        serializer = CarSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    return JsonResponse(result, safe=False, status=200)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class CarDetail(APIView):
+    """
+    Get object with PK
+    """
+    def get_object(self, pk):
+        try:
+            return Cars.objects.get(pk=pk)
+        except Cars.DoesNotExist:
+            raise Http404
 
-def create_entry(request):
+    """
+    Get object
+    """
+    def get(self, request, pk, format=None):
+        car = self.get_object(pk=pk)
+        serializer = CarSerializer(car)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    if request.method != "POST":
-        return JsonResponse({"message": "Wrong HTTP"}, safe=False, status=405)
+    """
+    Update object
+    """
+    def put(self, request, pk, format=None):
+        car = self.get_object(pk=pk)
+        serializer = CarSerializer(car, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-    body_unicode = request.body.decode("utf-8")
-    body = json.loads(body_unicode)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    new_entry = None
+    """
+    Delete object
+    """
+    def delete(self, request, pk, format=None):
+        car = self.get_object(pk=pk)
+        car.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-    if body["vehicle_category"].lower() == "car":
-        car = Cars(
-            brand=body["vehicle"]["brand"],
-            model=body["vehicle"]["model"],
-            horse_power=body["vehicle"]["horse_power"],
-            build_year=body["vehicle"]["build_year"],
-            euro_category=body["vehicle"]["euro_category"],
-            price=body["vehicle"]["price"],
-        )
-        car.save()
+class TruckView(APIView):
+    """
+    List all trucks
+    """
+    def get(self, request, format=None):
+        trucks = Trucks.objects.all()
+        serializer = TruckSerializer(trucks, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-        description = body["description"]
-        vehicle_type = body["vehicle_type"]
-        location = body["location"]
+    """
+    Create new truck
+    """
+    def post(self, request, format=None):
+        serializer = TruckSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        new_entry = Dealership(
-            car_id=car.id,
-            vehicle_category=body["vehicle_category"],
-            description=description,
-            vehicle_type=vehicle_type,
-            location=location,
-        )
-        new_entry.save()
-
-    else:
-        truck = Trucks(
-            brand=body["vehicle"]["brand"],
-            model=body["vehicle"]["model"],
-            horse_power=body["vehicle"]["horse_power"],
-            build_year=body["vehicle"]["build_year"],
-            max_load=body["vehicle"]["max_load"],
-            price=body["vehicle"]["price"],
-        )
-
-        truck.save()
-
-        description = body["description"]
-        vehicle_type = body["vehicle_type"]
-        location = body["location"]
-
-        new_entry = Dealership(
-            truck_id=truck.id,
-            vehicle_category=body["vehicle_category"],
-            description=description,
-            vehicle_type=vehicle_type,
-            location=location,
-        )
-        new_entry.save()
-
-    entry = Dealership.objects.filter(id=new_entry.id).values()
-
-    result = [dealership_values for dealership_values in entry]
-
-    return JsonResponse(result[0], safe=False, status=200)
-
-
-def delete_entry(request, vehicle_type, vehicle_id):
-
-    if request.method != "DELETE":
-        return JsonResponse({"message": "Wrong HTTP"}, safe=False, status=405)
-
-    message = f"Successfully deleted entry: {vehicle_type} - {vehicle_id}"
-    status = 200
-
-    if vehicle_type == "car":
-        if Cars.objects.filter(id=vehicle_id).exists():
-            entry = Cars.objects.get(id=vehicle_id)
-            entry.delete()
-        else:
-            message = "ID does not exist"
-            status = 404
-    elif vehicle_type == "truck":
-        if Trucks.objects.filter(id=vehicle_id).exists():
-            entry = Trucks.objects.get(id=vehicle_id)
-            entry.delete()
-        else:
-            message = "ID does not exist"
-            status = 404
-    else:
-        message = "Vehicle Type does not exist"
-        status = 404
-
-    return JsonResponse({"message": message}, safe=False, status=status)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-def edit_entry(request, vehicle_type, vehicle_id):
-    if request.method != "PUT" and request.method != "PATCH":
-        return JsonResponse({"message": "Wrong HTTP"}, safe=False, status=405)
+class TruckDetail(APIView):
+    """
+    Get object with PK
+    """
+    def get_object(self, pk):
+        try:
+            return Trucks.objects.get(pk=pk)
+        except Trucks.DoesNotExist:
+            return Http404
 
-    body_unicode = request.body.decode("utf-8")
-    body = json.loads(body_unicode)
+    """
+    Get object
+    """
+    def get(self, request, pk, format=None):
+        truck = self.get_object(pk=pk)
+        serializer = TruckSerializer(truck)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    message = f"Successfully edited entry: {vehicle_type} - {vehicle_id}"
-    status = 200
 
-    result = None
+    """
+    Update object
+    """
+    def put(self, request, pk, format=None):
+        truck = self.get_object(pk=pk)
+        serializer = TruckSerializer(truck, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-    if vehicle_type == "car":
-        if Cars.objects.filter(id=vehicle_id).exists():
-            Cars.objects.filter(id=vehicle_id).update(**body["vehicle"])
-            entry = Cars.objects.filter(id=vehicle_id).values()
-            result = [entry_values for entry_values in entry]
-        else:
-            message = "ID does not exist"
-            status = 404
-    elif vehicle_type == "truck":
-        if Trucks.objects.filter(id=vehicle_id).exists():
-            Trucks.objects.filter(id=vehicle_id).update(**body["vehicle"])
-            entry = Trucks.objects.filter(id=vehicle_id).values()
-            result = [entry_values for entry_values in entry]
-        else:
-            message = "ID does not exist"
-            status = 200
-    else:
-        message = "Vehicle Type does not exist"
-        status = 404
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    return JsonResponse(
-        {"message": message, "vehicle": result[0]}, safe=False, status=status
-    )
+    """
+    Delete object
+    """
+    def delete(self, request, pk, format=None):
+        truck = self.get_object(pk=pk)
+        truck.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
