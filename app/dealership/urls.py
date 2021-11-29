@@ -1,12 +1,13 @@
 from django.urls import path
+from rest_framework.urlpatterns import format_suffix_patterns
 
-from .views import get_entries, create_entry, delete_entry, edit_entry
+from .views import CarView, CarDetail, TruckView, TruckDetail
 
 urlpatterns = [
-    path("all/", get_entries, name="get_entries"),
-    path("create/", create_entry, name="create_entry"),
-    path(
-        "delete/<str:vehicle_type>/<str:vehicle_id>", delete_entry, name="delete_entry"
-    ),
-    path("edit/<str:vehicle_type>/<str:vehicle_id>", edit_entry, name="edit_entry"),
+    path('cars/', CarView.as_view()),
+    path('cars/<int:pk>/', CarDetail.as_view()),
+    path('trucks/', TruckView.as_view()),
+    path('trucks/<int:pk>/', TruckDetail.as_view()),
 ]
+
+urlpatterns = format_suffix_patterns(urlpatterns)
