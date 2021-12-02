@@ -1,13 +1,10 @@
 from django.urls import path
-from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework.routers import DefaultRouter
+from .views import CarViewSet, TruckViewSet
 
-from .views import CarView, CarDetail, TruckView, TruckDetail
+router = DefaultRouter()
 
-urlpatterns = [
-    path('cars/', CarView.as_view()),
-    path('cars/<int:pk>/', CarDetail.as_view()),
-    path('trucks/', TruckView.as_view()),
-    path('trucks/<int:pk>/', TruckDetail.as_view()),
-]
+router.register(r'cars', CarViewSet, basename='car')
+router.register(r'trucks', TruckViewSet, basename='truck')
 
-urlpatterns = format_suffix_patterns(urlpatterns)
+urlpatterns = router.urls
