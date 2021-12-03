@@ -4,12 +4,11 @@ services:
   web:
     build: .
     command: >
-      sh -c "python manage.py makemigrations && python manage.py migrate && gunicorn app.wsgi ./gunicorn.conf.py"
+      sh -c "python manage.py migrate && gunicorn app.wsgi ./gunicorn.conf.py"
     volumes:
       - .:/app
     ports:
       - 8000:8000
-    image: django
     container_name: django_container
     depends_on:
       - db
