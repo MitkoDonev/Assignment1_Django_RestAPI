@@ -2,23 +2,35 @@ version: "3"
 
 services:
   web:
+    container_name: django_container
     build: .
     command: >
-      sh -c "python manage.py makemigrations && python manage.py migrate && gunicorn app.wsgi ./gunicorn.conf.py"
+      sh -c "python manage.py migrate && gunicorn app.wsgi ./gunicorn.conf.py"
     volumes:
       - .:/app
     ports:
       - 8000:8000
-    image: django
-    container_name: django_container
     depends_on:
       - db
   db:
+    container_name: postgres_container
     image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: dealership
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Radina.987
-    container_name: postgres_db
+      POSTGRES_NAME: ${POSTGRES_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - 5432:5432
+    restart: always
+
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "5050:80"

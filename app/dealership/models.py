@@ -1,5 +1,7 @@
 from django.db import models
 
+from datetime import datetime
+
 # Create your models here.
 class Vehicles(models.Model):
     VEHICLE_TYPES = [(1, "NEW"), (2, "USED"), (3, "SCRAP")]
@@ -17,6 +19,12 @@ class Vehicles(models.Model):
     class Meta:
         abstract = True
         ordering = ['price']
+
+    @property
+    def get_created_time(self):
+        now = datetime.now()
+        current = now.strftime("%H:%M:%S")
+        return current
 
     def __str__(self):
         return f"{self.brand} {self.model} : {self.price}"

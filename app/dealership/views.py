@@ -7,6 +7,9 @@ from rest_framework import status
 from .serializers import CarSerializer, TruckSerializer
 from .models import Cars, Trucks
 class CarViewSet(ViewSet):
+    # queryset = Cars.objects.all()
+    # serializer_class = CarSerializer()
+
     """
     Get object with PK
     """
