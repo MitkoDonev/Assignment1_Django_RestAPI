@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 
+from decouple import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-(1blo@v4p1%1a2#wh&2_*izsn%+@txy9rto7g3!2y@k*&#qvez"
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(os.environ.get('DEBUG', default=1))
+DEBUG = config('DEBUG')
 
 ALLOWED_HOSTS = ["*"]
 
@@ -80,12 +82,12 @@ WSGI_APPLICATION = "app.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "dealership",
-        "USER": "postgres",
-        "PASSWORD": "Radina.987",
-        "HOST": "db",
-        "PORT": "5432",
+        "ENGINE": config('POSTGRES_ENGINE'),
+        "NAME": config('POSTGRES_NAME'),
+        "USER": config('POSTGRES_USER'),
+        "PASSWORD": config('POSTGRES_PASSWORD'),
+        "HOST": config('POSTGRES_HOST'),
+        "PORT": config('POSTGRES_PORT'),
     }
 }
 
