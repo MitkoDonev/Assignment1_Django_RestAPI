@@ -18,7 +18,7 @@ class Vehicles(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ['price']
+        ordering = ["price"]
 
     @property
     def get_created_time(self):
@@ -28,6 +28,7 @@ class Vehicles(models.Model):
 
     def __str__(self):
         return f"{self.brand} {self.model} : {self.price}"
+
 
 class Cars(Vehicles):
     EURO_CATEGORY_CHOICES = [
@@ -41,6 +42,7 @@ class Cars(Vehicles):
     euro_category = models.CharField(
         "Euro Category", choices=EURO_CATEGORY_CHOICES, default=1, max_length=10
     )
+
 
 class Trucks(Vehicles):
     MAX_LOAD = [
