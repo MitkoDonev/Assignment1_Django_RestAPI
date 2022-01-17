@@ -4,7 +4,6 @@ from .views import CarViewSet, TruckViewSet
 
 router = DefaultRouter()
 
-router.register(r'cars', CarViewSet)
-router.register(r'trucks', TruckViewSet, basename='truck')
-
+router.register(r"cars", CarViewSet, basename="car")
+router.register(r"trucks", TruckViewSet, basename="truck")
 urlpatterns = router.urls
