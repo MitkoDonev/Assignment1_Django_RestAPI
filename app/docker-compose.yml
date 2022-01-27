@@ -34,3 +34,13 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     ports:
       - "5050:80"
+
+  swagger:
+    container_name: swagger-ui
+    image: swaggerapi/swagger-ui
+    volumes:
+      - ./swagger.yml:/swagger.yml
+    environment:
+      SWAGGER_JSON: /swagger.yml
+    ports:
+      - "${SWAGGER_UI_PORT}:8080"
