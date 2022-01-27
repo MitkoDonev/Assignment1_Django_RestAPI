@@ -9,78 +9,91 @@ info:
 servers:
   - url: http://localhost:8000/
 
+security: []
+
 paths:
-  "/cars/":
+  /cars/:
     get:
       tags:
-        - "Cars"
+        - cars
       summary: Gets all cars
       operationId: GetCars
       responses:
-        "200":
+        200:
           description: JSON array of car objects
-          $ref: "#/components/responses/SuccessGET"
-
-        "404":
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  details:
+                    $ref: "#/components/schemas/Details"
+                  output:
+                    $ref: "#/components/schemas/Car"
+        404:
           description: Failed POST request
           $ref: "#/components/responses/NotFound"
 
-      security:
-        - bearerAuth: []
-
     post:
       tags:
-        - "Cars"
+        - cars
       summary: Create car object
       operationId: CreateCar
       requestBody:
-        $ref: "#/components/requestBodies/CarPost"
+        $ref: "#/components/requestBodies/CarBodyRequest"
       responses:
-        "201":
-          description: JSON array with car object
-          $ref: "#/components/responses/SuccessPOST"
-
-        "404":
+        201:
+          description: JSON array of car objects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  details:
+                    $ref: "#/components/schemas/Details"
+                  output:
+                    $ref: "#/components/schemas/Car"
+        404:
           description: Failed POST request
           $ref: "#/components/responses/NotFound"
 
-      security:
-        - bearerAuth: []
-
-  "/cars/{carID}/":
+  /cars/{id}/:
     get:
       tags:
-        - "Cars"
+        - cars
       summary: Returns a car object by id
       operationId: GetCarByID
       parameters:
-        - name: carID
+        - name: id
           in: path
           description: car id
           required: true
           schema:
             type: integer
             format: int64
-
       responses:
-        "200":
+        200:
           description: JSON array of car objects
-          $ref: "#/components/responses/SuccessPOST"
-
-        "404":
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  details:
+                    $ref: "#/components/schemas/Details"
+                  output:
+                    $ref: "#/components/schemas/Car"
+        404:
           description: Failed GET request
           $ref: "#/components/responses/NotFound"
-
-      security:
-        - bearerAuth: []
 
     put:
       tags:
-        - "Cars"
+        - cars
       summary: Returns an edited car object
       operationId: EditCar
       parameters:
-        - name: carID
+        - name: id
           in: path
           description: car id
           required: true
@@ -88,66 +101,78 @@ paths:
             type: integer
             format: int64
       requestBody:
-        $ref: "#/components/requestBodies/CarPut"
+        $ref: "#/components/requestBodies/CarBodyRequest"
       responses:
-        "200":
+        200:
           description: JSON array of car objects
           content:
-            "application/json": {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  details:
+                    $ref: "#/components/schemas/Details"
+                  output:
+                    $ref: "#/components/schemas/Car"
 
-        "404":
-          description: Failed PUT request
-          content:
-            "application/json": {}
-
-      security:
-        - bearerAuth: []
-
-  "/trucks/":
-    get:
-      tags:
-        - "Trucks"
-      summary: Gets all trucks
-      operationId: GetTrucks
-      responses:
-        "200":
-          description: JSON array of car objects
-          $ref: "#/components/responses/SuccessGET"
-
-        "404":
-          description: Failed GET request
-          $ref: "#/components/responses/NotFound"
-
-      security:
-        - bearerAuth: []
-
-    post:
-      tags:
-        - "Trucks"
-      summary: Create truck object
-      operationId: CreateTruck
-      requestBody:
-        $ref: "#/components/requestBodies/TruckPost"
-      responses:
-        "200":
-          description: JSON array with truck object
-          $ref: "#/components/responses/SuccessPOST"
-
-        "404":
+        404:
           description: Failed POST request
           $ref: "#/components/responses/NotFound"
 
-      security:
-        - bearerAuth: []
-
-  "/trucks/{truckID}/":
+  /trucks/:
     get:
       tags:
-        - "Trucks"
+        - trucks
+      summary: Gets all trucks
+      operationId: GetTrucks
+      responses:
+        200:
+          description: JSON array of car objects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  details:
+                    $ref: "#/components/schemas/Details"
+                  output:
+                    $ref: "#/components/schemas/ArrayOfTrucks"
+        404:
+          description: Failed GET request
+          $ref: "#/components/responses/NotFound"
+
+    post:
+      tags:
+        - trucks
+      summary: Create truck object
+      operationId: CreateTruck
+      requestBody:
+        $ref: "#/components/requestBodies/TruckBodyRequest"
+      responses:
+        200:
+          description: JSON array with truck object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  details:
+                    $ref: "#/components/schemas/Details"
+                  output:
+                    $ref: "#/components/schemas/Truck"
+
+        404:
+          description: Failed POST request
+          $ref: "#/components/responses/NotFound"
+
+  /trucks/{id}/:
+    get:
+      tags:
+        - trucks
       summary: Returns a truck object by id
       operationId: GetTruckByID
       parameters:
-        - name: truckID
+        - name: id
           in: path
           description: truck id
           required: true
@@ -155,20 +180,25 @@ paths:
             type: integer
             format: int64
       responses:
-        "200":
+        200:
           description: JSON array of truck objects
-          $ref: "#/components/responses/SuccessGET"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  details:
+                    $ref: "#/components/schemas/Details"
+                  output:
+                    $ref: "#/components/schemas/Truck"
 
-        "404":
+        404:
           description: Failed GET request
           $ref: "#/components/responses/NotFound"
 
-      security:
-        - bearerAuth: []
-
     put:
       tags:
-        - "Trucks"
+        - "trucks"
       summary: Returns an edited truck object
       operationId: EditCar
       parameters:
@@ -180,81 +210,85 @@ paths:
             type: integer
             format: int64
       requestBody:
-        $ref: "#/components/requestBodies/TruckPut"
+        $ref: "#/components/requestBodies/TruckBodyRequest"
       responses:
-        "200":
+        200:
           description: JSON array of truck objects
-          $ref: "#/components/responses/SuccessGET"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  details:
+                    $ref: "#/components/schemas/Details"
+                  output:
+                    $ref: "#/components/schemas/Truck"
 
-        "404":
+        404:
           description: Failed PUT request
           $ref: "#/components/responses/NotFound"
 
-      security:
-        - bearerAuth: []
-
 components:
   responses:
-    SuccessGET:
-      description: Success
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/SuccessGET"
-          example:
-            details: HTTP message
-            output: array of objects
-
-    SuccessPOST:
-      description: Success
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/SuccessPOST"
-          example:
-            details: HTTP message
-            output: array of objects
-
     NotFound:
       description: The specified resource was not found
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/FailedGET"
+            type: object
+            properties:
+              details:
+                type: string
+                description: Human readable error message
+                readOnly: true
           example:
             details: HTTP message
+            output: error message
+
+  parameters:
+    carID:
+      name: carID
+      in: path
+      description: car id
+      required: true
+      schema:
+        type: integer
+        format: int64
 
   requestBodies:
-    CarPost:
-      description: Body Car POST request
+    CarBodyRequest:
+      description: request car by ID
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/CarPost"
-    CarPut:
-      description: Body CarPut request
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/CarPut"
+            $ref: "#/components/schemas/Car"
 
-    TruckPost:
-      description: Body Truck POST request
+    TruckBodyRequest:
+      description: request truck by ID
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/TruckPost"
-
-    TruckPut:
-      description: Body TruckPut request
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/TruckPut"
+            $ref: "#/components/schemas/Truck"
 
   schemas:
-    CarPost:
+    Details:
+      type: string
+      description: Human readable error message
+      readOnly: true
+
+    ArrayOfCars:
+      type: array
+      items:
+        $ref: "#/components/schemas/Car"
+
+    ArrayOfTrucks:
+      type: array
+      items:
+        $ref: "#/components/schemas/Truck"
+
+    Car:
       type: object
+      required: [brand, model, horse_power, build_year]
       properties:
         brand:
           type: string
@@ -264,11 +298,16 @@ components:
           type: integer
         build_year:
           type: string
+        euro_category:
+          type: integer
+        vehicle_type:
+          type: integer
         price:
           type: integer
 
-    CarPut:
+    Truck:
       type: object
+      required: [brand, model, horse_power, build_year]
       properties:
         brand:
           type: string
@@ -278,67 +317,14 @@ components:
           type: integer
         build_year:
           type: string
+        max_load:
+          type: integer
+        vehicle_type:
+          type: integer
         price:
           type: integer
-
-    TruckPost:
-      type: object
-      properties:
-        brand:
+        created_time:
           type: string
-        model:
-          type: string
-        horse_power:
-          type: integer
-        build_year:
-          type: string
-        price:
-          type: integer
-
-    TruckPut:
-      type: object
-      properties:
-        brand:
-          type: string
-        model:
-          type: string
-        horse_power:
-          type: integer
-        build_year:
-          type: string
-        price:
-          type: integer
-
-    FailedGET:
-      type: object
-      properties:
-        details:
-          type: string
-          description: Human readable error message
-          readOnly: true
-
-    SuccessPOST:
-      type: object
-      properties:
-        details:
-          type: string
-          description: Human readable error message
-          readOnly: true
-        output:
-          type: object
-          description: Truck object
-          readOnly: true
-
-    SuccessGET:
-      type: object
-      properties:
-        details:
-          type: string
-          description: Successful GET Request
-          readOnly: true
-        output:
-          type: array
-          description: List of objects
           readOnly: true
 
   securitySchemes:
